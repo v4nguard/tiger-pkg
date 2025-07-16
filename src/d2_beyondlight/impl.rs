@@ -57,7 +57,11 @@ impl PackageD2BeyondLight {
         })?;
 
         let wide_hashes: Vec<HashTableEntry> = if header.h64_table_size != 0 {
-            reader.seek(SeekFrom::Start((header.h64_table_offset + 0x50) as _))?;
+            reader.seek(SeekFrom::Start((header.h64_table_offset + 0x10) as _))?;
+            let offset = reader.read_le::<i64>()?;
+            reader.seek(SeekFrom::Start(
+                (header.h64_table_offset as i64 + 0x20 + offset) as _,
+            ))?;
             reader.read_le_args(VecArgs {
                 count: header.h64_table_size as _,
                 inner: (),

@@ -104,6 +104,7 @@ impl clap::ValueEnum for GameVersion {
             Self::Destiny(DestinyVersion::Destiny2WitchQueen),
             Self::Destiny(DestinyVersion::Destiny2Lightfall),
             Self::Destiny(DestinyVersion::Destiny2TheFinalShape),
+            Self::Destiny(DestinyVersion::Destiny2TheEdgeOfFate),
             Self::Marathon(MarathonVersion::MarathonAlpha),
         ]
     }
@@ -192,6 +193,10 @@ pub enum DestinyVersion {
     /// Destiny 2 (The Final Shape)
     #[value(name = "d2_tfs")]
     Destiny2TheFinalShape = 2_8000,
+
+    /// Destiny 2 (The Edge of Fate)
+    #[value(name = "d2_eof")]
+    Destiny2TheEdgeOfFate = 2_9000,
 }
 
 impl DestinyVersion {
@@ -224,7 +229,8 @@ impl Version for DestinyVersion {
             DestinyVersion::Destiny2BeyondLight
             | DestinyVersion::Destiny2WitchQueen
             | DestinyVersion::Destiny2Lightfall
-            | DestinyVersion::Destiny2TheFinalShape => {
+            | DestinyVersion::Destiny2TheFinalShape
+            | DestinyVersion::Destiny2TheEdgeOfFate => {
                 Arc::new(PackageD2BeyondLight::open(path, *self)?)
             }
         })
@@ -252,6 +258,7 @@ impl Version for DestinyVersion {
             DestinyVersion::Destiny2WitchQueen => "Destiny 2: Witch Queen",
             DestinyVersion::Destiny2Lightfall => "Destiny 2: Lightfall",
             DestinyVersion::Destiny2TheFinalShape => "Destiny 2: The Final Shape",
+            DestinyVersion::Destiny2TheEdgeOfFate => "Destiny 2: The Edge of Fate",
         }
     }
 }
