@@ -15,19 +15,21 @@ directory where you run tiger-pkg from. Check below for the version of oo2core t
 ## Package format support
 
 | Version                         | Platform          | Works? | Oodle DLL |
-|---------------------------------|-------------------|--------|-----------|
+| ------------------------------- | ----------------- | ------ | --------- |
 | Destiny Internal Alpha          | X360              | ✅      | oo2core_3 |
 | Destiny Legacy (The Taken King) | PS3/X360/PS4/XONE | ✅      | oo2core_3 |
 | Destiny (Rise of Iron)          | PS4/XONE          | ✅      | oo2core_3 |
 | Destiny 2 (Beta)                | Any               | ✅      | oo2core_3 |
 | Destiny 2 (Pre-BL)              | Any               | ✅      | oo2core_3 |
 | Destiny 2 (Post-BL)             | Any               | ✅      | oo2core_9 |
-| Marathon                        | Any               | ❌       | oo2core_9 |
+| Marathon                        | Any               | ✅      | oo2core_9 |
 
 ## Game version codes
 
+### Destiny
+
 | Version               | Code          |
-|-----------------------|---------------|
+| --------------------- | ------------- |
 | DestinyInternalAlpha  | `d1_devalpha` |
 | DestinyFirstLookAlpha | `d1_fla`      |
 | DestinyTheTakenKing   | `d1_ttk`      |
@@ -39,11 +41,18 @@ directory where you run tiger-pkg from. Check below for the version of oo2core t
 | Destiny2WitchQueen    | `d2_wq`       |
 | Destiny2Lightfall     | `d2_lf`       |
 | Destiny2TheFinalShape | `d2_tfs`      |
+| Destiny2TheEdgeOfFate | `d2_eof`      |
+
+### Marathon
+
+| Version       | Code       |
+| ------------- | ---------- |
+| MarathonAlpha | `ma_alpha` |
 
 ## Platform codes
 
 | Platform      | Code      |
-|---------------|-----------|
+| ------------- | --------- |
 | Xbox 360      | `x360`    |
 | Xbox One      | `xboxone` |
 | PlayStation 3 | `ps3`     |
