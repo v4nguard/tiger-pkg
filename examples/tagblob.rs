@@ -42,7 +42,8 @@ pub fn wwise_bank_type(version: GameVersion) -> (u8, u8) {
             DestinyVersion::Destiny2BeyondLight
             | DestinyVersion::Destiny2WitchQueen
             | DestinyVersion::Destiny2Lightfall
-            | DestinyVersion::Destiny2TheFinalShape => (26, 6),
+            | DestinyVersion::Destiny2TheFinalShape
+            | DestinyVersion::Destiny2TheEdgeOfFate => (26, 6),
         },
         // Same as post-BeyondLight
         GameVersion::Marathon(MarathonVersion::MarathonAlpha) => (26, 6),
