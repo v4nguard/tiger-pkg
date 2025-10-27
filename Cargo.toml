@@ -14,7 +14,6 @@ keywords = ["destiny", "pkg", "package", "bungie", "tiger"]
 include = ["**/*.rs", "Cargo.toml"]
 
 [dependencies]
-aes = "0.8"
 aes-gcm = "0.10"
 anyhow = "1"
 bincode = { version = "2.0.0-rc.3" }

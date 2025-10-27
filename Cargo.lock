@@ -841,7 +841,6 @@ dependencies = [
 name = "tiger-pkg"
 version = "0.18.7"
 dependencies = [
- "aes",
  "aes-gcm",
  "anyhow",
  "bincode",
