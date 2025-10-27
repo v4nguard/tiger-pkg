@@ -89,7 +89,14 @@ impl Oodle {
         #[cfg(target_os = "macos")]
         compile_error!("macOS is not supported for Oodle decompression!");
 
-        let oodle = Self::from_path(lib_path)?;
+        let exe_dir = std::env::current_exe()?
+            .parent()
+            .ok_or_else(|| anyhow::anyhow!("Failed to get current exe directory"))?
+            .to_path_buf();
+
+        let oodle = Self::from_path(exe_dir.join(&lib_path))
+            .or_else(|_| Self::from_path(std::env::current_dir()?.join(&lib_path)))
+            .or_else(|_| Self::from_path(&lib_path))?;
         info!("Successfully loaded Oodle {}", version.num());
 
         Ok(oodle)
