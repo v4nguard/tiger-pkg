@@ -12,17 +12,19 @@ In any other case, you will need to get oo2core_3_win64.dll from somewhere (an o
 the
 directory where you run tiger-pkg from. Check below for the version of oo2core that is required for your game.
 
+On Linux, liblinoodle is used for oo2core_3 support (which requires the respective Windows DLL), while liboodle-data-shared.so is used for oo2core_9 support (which does not require the Windows DLL and can be used on it's own). `liboodle-data-shared.so` can be downloaded [here](https://github.com/WorkingRobot/OodleUE/releases/latest) (you will want to download clang.zip or gcc.zip)
+
 ## Package format support
 
-| Version                         | Platform          | Works? | Oodle DLL |
+| Version                         | Platform          | Works? | Oodle Library |
 | ------------------------------- | ----------------- | ------ | --------- |
-| Destiny Internal Alpha          | X360              | ✅      | oo2core_3 |
-| Destiny Legacy (The Taken King) | PS3/X360/PS4/XONE | ✅      | oo2core_3 |
-| Destiny (Rise of Iron)          | PS4/XONE          | ✅      | oo2core_3 |
-| Destiny 2 (Beta)                | Any               | ✅      | oo2core_3 |
-| Destiny 2 (Pre-BL)              | Any               | ✅      | oo2core_3 |
-| Destiny 2 (Post-BL)             | Any               | ✅      | oo2core_9 |
-| Marathon                        | Any               | ✅      | oo2core_9 |
+| Destiny Internal Alpha          | X360              | ✅      | `oo2core_3_win64.dll` |
+| Destiny Legacy (The Taken King) | PS3/X360/PS4/XONE | ✅      | `oo2core_3_win64.dll` |
+| Destiny (Rise of Iron)          | PS4/XONE          | ✅      | `oo2core_3_win64.dll` |
+| Destiny 2 (Beta)                | Any               | ✅      | `oo2core_3_win64.dll` |
+| Destiny 2 (Pre-BL)              | Any               | ✅      | `oo2core_3_win64.dll` |
+| Destiny 2 (Post-BL)             | Any               | ✅      | `oo2core_9_win64.dll` / `liboodle-data-shared.so` |
+| Marathon                        | Any               | ✅      | `oo2core_9_win64.dll` / `liboodle-data-shared.so` |
 
 ## Game version codes
 

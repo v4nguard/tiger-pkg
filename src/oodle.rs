@@ -82,7 +82,10 @@ impl Oodle {
         #[cfg(target_os = "windows")]
         let lib_path = format!("oo2core_{}_win64.dll", version.num());
         #[cfg(target_os = "linux")]
-        let lib_path = format!("liblinoodle{}.so", version.num());
+        let lib_path = match version {
+            OodleVersion::V3 => "liblinoodle3.so".to_string(),
+            OodleVersion::V9 => "liboodle-data-shared.so".to_string(),
+        };
         #[cfg(target_os = "macos")]
         compile_error!("macOS is not supported for Oodle decompression!");
 
@@ -134,8 +137,10 @@ impl Oodle {
 }
 
 lazy_static! {
-    pub static ref OODLE_3: RwLock<Option<Oodle>> = RwLock::new(Oodle::new(OodleVersion::V3).ok());
-    pub static ref OODLE_9: RwLock<Option<Oodle>> = RwLock::new(Oodle::new(OodleVersion::V9).ok());
+    pub static ref OODLE_3: RwLock<anyhow::Result<Oodle>> =
+        RwLock::new(Oodle::new(OodleVersion::V3));
+    pub static ref OODLE_9: RwLock<anyhow::Result<Oodle>> =
+        RwLock::new(Oodle::new(OodleVersion::V9));
 }
 
 /// Fails if the library isn't loaded
@@ -144,7 +149,7 @@ pub fn decompress_3(buffer: &[u8], output_buffer: &mut [u8]) -> anyhow::Result<i
         .read()
         .as_ref()
         .map(|o| o.decompress(buffer, output_buffer))
-        .ok_or_else(|| panic!("Oodle 3 isn't loaded!"))
+        .map_err(|e| panic!("Oodle 3 failed to load: {e}"))
 }
 
 /// Fails if the library isn't loaded
@@ -153,5 +158,5 @@ pub fn decompress_9(buffer: &[u8], output_buffer: &mut [u8]) -> anyhow::Result<i
         .read()
         .as_ref()
         .map(|o| o.decompress(buffer, output_buffer))
-        .ok_or_else(|| panic!("Oodle 9 isn't loaded!"))
+        .map_err(|e| panic!("Oodle 9 failed to load: {e}"))
 }

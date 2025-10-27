@@ -67,15 +67,19 @@ impl PackageManager {
 
         if oo2core_3_path.exists() {
             let mut o = oodle::OODLE_3.write();
-            if o.is_none() {
-                *o = oodle::Oodle::from_path(oo2core_3_path).ok();
+            if o.is_err() {
+                if let Ok(oodle) = oodle::Oodle::from_path(oo2core_3_path) {
+                    *o = Ok(oodle);
+                }
             }
         }
 
         if oo2core_9_path.exists() {
             let mut o = oodle::OODLE_9.write();
-            if o.is_none() {
-                *o = oodle::Oodle::from_path(oo2core_9_path).ok();
+            if o.is_err() {
+                if let Ok(oodle) = oodle::Oodle::from_path(oo2core_9_path) {
+                    *o = Ok(oodle);
+                }
             }
         }
 
