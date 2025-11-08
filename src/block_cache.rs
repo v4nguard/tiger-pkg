@@ -35,7 +35,6 @@ impl BlockCache {
     where
         F: FnOnce(usize) -> anyhow::Result<Vec<u8>>,
     {
-        let _span = tracing::debug_span!("PackageCommonD2::get_block", block_index).entered();
         let CachedBlock { data, .. } = match self.blocks.write().entry(block_index) {
             Entry::Occupied(o) => o.get().clone(),
             Entry::Vacant(v) => {

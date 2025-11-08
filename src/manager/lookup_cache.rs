@@ -1,6 +1,6 @@
 use itertools::MultiUnzip;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
-use tracing::{debug_span, error, info};
+use tracing::{error, info};
 
 use super::{PackageManager, TagLookupIndex};
 use crate::{manager::HashTableEntryShort, TagHash64, Version};
@@ -60,7 +60,6 @@ impl PackageManager {
             .package_paths
             .par_iter()
             .filter_map(|(_, p)| {
-                let _span = debug_span!("Read package tables", package = p.path).entered();
                 let pkg = match self.version.open(&p.path) {
                     Ok(package) => package,
                     Err(e) => {

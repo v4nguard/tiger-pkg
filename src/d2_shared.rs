@@ -143,9 +143,7 @@ impl PackageCommonD2 {
         })
     }
 
-    fn get_block_raw(&self, block_index: usize) -> anyhow::Result<Cow<[u8]>> {
-        let _span = tracing::debug_span!("PackageCommonD2::get_block_raw", block_index).entered();
-
+    fn get_block_raw(&self, block_index: usize) -> anyhow::Result<Cow<'_, [u8]>> {
         let bh = &self.blocks[block_index];
         let mut data = vec![0u8; bh.size as usize];
 
@@ -182,26 +180,17 @@ impl PackageCommonD2 {
 
     /// Reads, decrypts and decompresses the specified block
     fn read_block(&self, block_index: usize) -> anyhow::Result<Vec<u8>> {
-        let _span = tracing::debug_span!("PackageCommonD2::read_block", block_index).entered();
-
         let bh = self.blocks[block_index].clone();
 
         let mut block_data = self.get_block_raw(block_index)?.to_vec();
 
         if (bh.flags & 0x2) != 0 {
-            let _espan =
-                tracing::debug_span!("PackageCommonD2::get_block_raw decrypt", block_index)
-                    .entered();
             self.gcm
                 .write()
                 .decrypt_block_in_place(bh.flags, &bh.gcm_tag, &mut block_data)?;
         };
 
         let decompressed_data = if (bh.flags & 0x1) != 0 {
-            let _dspan =
-                tracing::debug_span!("PackageCommonD2::get_block_raw decompress", block_index)
-                    .entered();
-
             let mut buffer = vec![0u8; BLOCK_SIZE];
             let _decompressed_size = match self.version {
                 // Destiny 1
@@ -232,7 +221,6 @@ impl PackageCommonD2 {
     }
 
     pub fn get_block(&self, block_index: usize) -> anyhow::Result<Arc<Vec<u8>>> {
-        let _span = tracing::debug_span!("PackageCommonD2::get_block", block_index).entered();
         self.block_cache.get(block_index, |i| self.read_block(i))
     }
 }
