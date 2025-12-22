@@ -10,11 +10,11 @@ use std::{
     sync::Arc,
 };
 
+use ahash::HashMap;
 use anyhow::Context;
 use binrw::{BinRead, BinReaderExt};
 use parking_lot::RwLock;
 use rayon::prelude::*;
-use rustc_hash::FxHashMap;
 use tracing::{debug_span, info, warn};
 
 use crate::{
@@ -33,16 +33,16 @@ pub struct HashTableEntryShort {
 
 #[derive(Default, bincode::Decode, bincode::Encode)]
 pub struct TagLookupIndex {
-    pub tag32_entries_by_pkg: FxHashMap<u16, Vec<UEntryHeader>>,
-    pub tag64_entries: FxHashMap<u64, HashTableEntryShort>,
-    pub tag32_to_tag64: FxHashMap<TagHash, TagHash64>,
+    pub tag32_entries_by_pkg: HashMap<u16, Vec<UEntryHeader>>,
+    pub tag64_entries: HashMap<u64, HashTableEntryShort>,
+    pub tag32_to_tag64: HashMap<TagHash, TagHash64>,
 
     pub named_tags: Vec<PackageNamedTagEntry>,
 }
 
 pub struct PackageManager {
     pub package_dir: PathBuf,
-    pub package_paths: FxHashMap<u16, PackagePath>,
+    pub package_paths: HashMap<u16, PackagePath>,
     pub version: GameVersion,
     pub platform: PackagePlatform,
 
@@ -50,7 +50,7 @@ pub struct PackageManager {
     pub lookup: TagLookupIndex,
 
     /// Packages that are currently open for reading
-    pkgs: RwLock<FxHashMap<u16, Arc<dyn Package>>>,
+    pkgs: RwLock<HashMap<u16, Arc<dyn Package>>>,
 }
 
 impl PackageManager {
@@ -60,7 +60,7 @@ impl PackageManager {
         platform: Option<PackagePlatform>,
     ) -> anyhow::Result<PackageManager> {
         // All the latest packages
-        let mut packages: FxHashMap<u16, String> = Default::default();
+        let mut packages: HashMap<u16, String> = Default::default();
 
         let oo2core_3_path = packages_dir.as_ref().join("../bin/x64/oo2core_3_win64.dll");
         let oo2core_9_path = packages_dir.as_ref().join("../bin/x64/oo2core_9_win64.dll");
@@ -137,7 +137,7 @@ impl PackageManager {
             });
         }
 
-        let package_paths: FxHashMap<u16, PackagePath> = packages
+        let package_paths: HashMap<u16, PackagePath> = packages
             .into_iter()
             .map(|(id, p)| (id, PackagePath::parse_with_defaults(&p)))
             .collect();

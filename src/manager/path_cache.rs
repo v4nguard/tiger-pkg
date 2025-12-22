@@ -1,12 +1,11 @@
 use std::{
-    collections::HashMap,
     fs,
     path::{Path, PathBuf},
     time::SystemTime,
 };
 
+use ahash::HashMap;
 use itertools::Itertools;
-use rustc_hash::FxHashMap;
 use tracing::info;
 
 use super::PackageManager;
@@ -91,7 +90,7 @@ impl PackageManager {
         version: GameVersion,
         platform: Option<PackagePlatform>,
         packages_dir: &Path,
-    ) -> Result<FxHashMap<u16, String>, String> {
+    ) -> Result<HashMap<u16, String>, String> {
         if let Some(cache) = Self::read_package_cache(false) {
             info!("Loading package cache");
             if let Some(p) = cache
@@ -146,7 +145,7 @@ impl Default for PathCache {
     fn default() -> Self {
         Self {
             cache_version: Self::VERSION,
-            versions: HashMap::new(),
+            versions: HashMap::default(),
         }
     }
 }
@@ -200,7 +199,7 @@ pub(crate) struct PathCacheEntry {
     version: GameVersion,
     platform: PackagePlatform,
     base_path: PathBuf,
-    paths: FxHashMap<u16, String>,
+    paths: HashMap<u16, String>,
 }
 
 pub fn exe_directory() -> PathBuf {

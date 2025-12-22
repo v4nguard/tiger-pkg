@@ -6,8 +6,8 @@ use std::{
     },
 };
 
+use ahash::AHashMap;
 use parking_lot::RwLock;
-use rustc_hash::FxHashMap;
 
 #[derive(Clone)]
 pub struct CachedBlock {
@@ -18,7 +18,7 @@ pub struct CachedBlock {
 /// Thread safe block cache that allows concurrent access and cleanup of old blocks.
 pub struct BlockCache {
     current_epoch: AtomicUsize,
-    blocks: RwLock<FxHashMap<usize, CachedBlock>>,
+    blocks: RwLock<AHashMap<usize, CachedBlock>>,
 }
 
 impl BlockCache {
@@ -27,7 +27,7 @@ impl BlockCache {
     pub fn new() -> Self {
         BlockCache {
             current_epoch: AtomicUsize::new(0),
-            blocks: RwLock::new(FxHashMap::default()),
+            blocks: RwLock::new(AHashMap::default()),
         }
     }
 

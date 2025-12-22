@@ -6,10 +6,10 @@ use std::{
     sync::Arc,
 };
 
+use ahash::AHashMap;
 use anyhow::Context;
 use binrw::{BinRead, BinReaderExt, NullString};
 use parking_lot::RwLock;
-use rustc_hash::FxHashMap;
 
 use crate::{
     block_cache::BlockCache,
@@ -87,7 +87,7 @@ pub struct PackageCommonD2 {
     pub(crate) path_base: String,
 
     block_cache: BlockCache,
-    pub(crate) file_handles: RwLock<FxHashMap<usize, File>>,
+    pub(crate) file_handles: RwLock<AHashMap<usize, File>>,
 }
 
 impl PackageCommonD2 {

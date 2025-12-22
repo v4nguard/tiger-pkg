@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
+use ahash::AHashMap;
 use clap::Parser;
-use rustc_hash::FxHashMap;
 use tiger_pkg::{package::PackagePlatform, GameVersion, PackageManager, TagHash};
 
 #[derive(Parser, Debug)]
@@ -24,7 +24,7 @@ fn main() -> anyhow::Result<()> {
 
     let package_manager = PackageManager::new(args.packages_path, args.version, args.platform)?;
     let mut totals: HashMap<(u8, u8), (usize, usize)> = Default::default();
-    let mut references: FxHashMap<u32, (usize, usize)> = Default::default();
+    let mut references: AHashMap<u32, (usize, usize)> = Default::default();
 
     let mut biggest_of_type: HashMap<(u8, u8), (usize, TagHash)> = Default::default();
 
