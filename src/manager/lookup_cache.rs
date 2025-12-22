@@ -6,7 +6,7 @@ use super::{PackageManager, TagLookupIndex};
 use crate::{manager::HashTableEntryShort, TagHash64, Version};
 
 impl PackageManager {
-    // const LOOKUP_CACHE_VERSION: u32 = 1;
+    const LOOKUP_CACHE_MAGIC: [u8; 4] = *b"TLI0";
 
     #[cfg(feature = "ignore_lookup_cache")]
     pub(super) fn read_lookup_cache(&self) -> Option<TagLookupIndex> {
@@ -33,11 +33,15 @@ impl PackageManager {
 
         let mut cache_data = Vec::new();
         file.read_to_end(&mut cache_data).ok()?;
+        if cache_data[..4] != Self::LOOKUP_CACHE_MAGIC {
+            error!("Invalid lookup cache magic");
+            return None;
+        }
 
         info!("Loading index cache");
 
         let cache: Option<TagLookupIndex> =
-            bincode::decode_from_slice(&cache_data, bincode::config::standard())
+            bincode::decode_from_slice(&cache_data[4..], bincode::config::legacy())
                 .map(|(v, _)| v)
                 .ok();
 
@@ -48,9 +52,16 @@ impl PackageManager {
     pub(super) fn write_lookup_cache(&self) -> anyhow::Result<()> {
         use super::path_cache::exe_relative_path;
 
+        let mut data = Vec::new();
+        data.extend_from_slice(&Self::LOOKUP_CACHE_MAGIC);
+        data.extend_from_slice(&bincode::encode_to_vec(
+            &self.lookup,
+            bincode::config::legacy(),
+        )?);
+
         Ok(std::fs::write(
             exe_relative_path(&format!("lookup_cache_{}.bin", self.cache_key())),
-            bincode::encode_to_vec(&self.lookup, bincode::config::standard())?,
+            data,
         )?)
     }
 
