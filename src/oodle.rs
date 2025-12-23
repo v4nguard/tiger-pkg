@@ -38,20 +38,20 @@ enum OodleLzThreadPhase {
 }
 
 type OodleLzDecompress = unsafe extern "C" fn(
-    compBuf: *const u8,
-    compBufSize: i64,
-    rawBuf: *mut u8,
-    rawLen: i64,
-    fuzzSafe: OodleLzFuzzSafe,
-    checkCRC: OodleLzCheckCRC,
+    comp_buf: *const u8,
+    comp_buf_size: i64,
+    raw_buf: *mut u8,
+    raw_len: i64,
+    fuzz_safe: OodleLzFuzzSafe,
+    check_crc: OodleLzCheckCRC,
     verbosity: OodleLzVerbosity,
-    decBufBase: *mut c_void,
-    decBufSize: *mut c_void,
-    fpCallback: *mut c_void,
-    callbackUserData: *mut c_void,
-    decoderMemory: *mut c_void,
-    decoderMemorySize: *const c_void,
-    threadPhase: OodleLzThreadPhase,
+    dec_buf_base: *mut c_void,
+    dec_buf_size: *mut c_void,
+    fp_callback: *mut c_void,
+    callback_user_data: *mut c_void,
+    decoder_memory: *mut c_void,
+    decoder_memory_size: *const c_void,
+    thread_phase: OodleLzThreadPhase,
 ) -> i64;
 
 #[derive(Clone, Copy)]
