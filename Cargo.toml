@@ -17,15 +17,15 @@ include = ["**/*.rs", "Cargo.toml"]
 aes-gcm = "0.10"
 ahash = "0.8"
 anyhow = "1"
-bincode = { version = "2.0.0-rc.3" }
-binrw = "0.13"
+bincode = { version = "2.0.1" }
+binrw = "0.15"
 bitflags = "2"
 clap = { version = "4.5.4", features = ["derive"] }
 clap-num = "1.0.2"
 hex = "0.4.3"
-itertools = "0.13"
+itertools = "0.14"
 lazy_static = "1"
-libloading = "0.8.0"
+libloading = "0.9.0"
 parking_lot = "0.12.1"
 rayon = "1.7.0"
 serde = { version = "1.0.188", features = ["derive"] }
@@ -42,7 +42,7 @@ ignore_lookup_cache = []
 global_manager_instance = []
 
 [dev-dependencies]
-env_logger = "0.10.0"
+env_logger = "0.11.0"
 pbr = "1.1.1"
 rayon = "1.7.0"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
