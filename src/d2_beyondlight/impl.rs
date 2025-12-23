@@ -9,8 +9,13 @@ use binrw::{BinReaderExt, Endian, VecArgs};
 
 use crate::{
     d2_beyondlight::structs::PackageHeader,
-    d2_shared::{CommonPackageData, HashTableEntry, PackageCommonD2, PackageNamedTagEntry},
-    package::{Package, PackageLanguage, PackagePlatform, ReadSeek, UEntryHeader, UHashTableEntry},
+    d2_shared::{
+        BlockFlags, CommonPackageData, HashTableEntry, PackageCommonD2, PackageNamedTagEntry,
+    },
+    package::{
+        Package, PackageLanguage, PackagePlatform, ReadSeek, Redaction, UEntryHeader,
+        UHashTableEntry,
+    },
     DestinyVersion,
 };
 
@@ -139,5 +144,22 @@ impl Package for PackageD2BeyondLight {
 
     fn get_block(&self, index: usize) -> anyhow::Result<Arc<Vec<u8>>> {
         self.common.get_block(index)
+    }
+
+    fn redaction_level(&self) -> Redaction {
+        let num_redacted = self
+            .common
+            .blocks
+            .iter()
+            .filter(|b| b.flags.contains(BlockFlags::REDACTED))
+            .count();
+
+        if num_redacted == 0 {
+            Redaction::None
+        } else if num_redacted == self.common.blocks.len() {
+            Redaction::Full
+        } else {
+            Redaction::Partial
+        }
     }
 }

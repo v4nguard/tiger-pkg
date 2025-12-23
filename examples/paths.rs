@@ -23,8 +23,9 @@ fn main() -> anyhow::Result<()> {
     let package_manager = PackageManager::new(args.packages_path, args.version, args.platform)?;
 
     for (p, path) in &package_manager.package_paths {
+        let redaction_level = package_manager.package_redaction_level(*p).unwrap();
         println!(
-            "{p:04x}: platform={platform:?}, name={name:?}, language={language:?}, id={id}, patch={patch}, path={path:?}, filename={filename:?}",
+            "{p:04x}: platform={platform:?}, name={name:?}, language={language:?}, id={id}, patch={patch}, path={path:?}, filename={filename:?}, redaction={redaction_level:?}",
             platform=path.platform, name=path.name, language=path.language, id=path.id, patch=path.patch, path=path.path, filename=path.filename,
         );
     }

@@ -19,6 +19,7 @@ ahash = "0.8"
 anyhow = "1"
 bincode = { version = "2.0.0-rc.3" }
 binrw = "0.13"
+bitflags = "2"
 clap = { version = "4.5.4", features = ["derive"] }
 clap-num = "1.0.2"
 hex = "0.4.3"

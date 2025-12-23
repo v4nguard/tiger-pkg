@@ -1,9 +1,10 @@
+use ahash::HashMap;
 use itertools::MultiUnzip;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use tracing::{error, info};
 
 use super::{PackageManager, TagLookupIndex};
-use crate::{manager::HashTableEntryShort, TagHash64, Version};
+use crate::{manager::HashTableEntryShort, package::Redaction, TagHash64, Version};
 
 impl PackageManager {
     const LOOKUP_CACHE_MAGIC: [u8; 4] = *b"TLI0";
@@ -78,7 +79,9 @@ impl PackageManager {
                         return None;
                     }
                 };
+
                 let entries = (pkg.pkg_id(), pkg.entries().to_vec());
+                let redaction_level = (pkg.pkg_id(), pkg.redaction_level());
 
                 let collect = pkg
                     .hash64_table()
@@ -97,11 +100,16 @@ impl PackageManager {
 
                 let named_tags = pkg.named_tags();
 
-                Some((entries, hashes, named_tags))
+                Some((entries, hashes, named_tags, redaction_level))
             })
             .collect();
 
-        let (entries, hashes, named_tags): (_, Vec<_>, Vec<_>) = tables.into_iter().multiunzip();
+        let (entries, hashes, named_tags, redaction_levels): (
+            _,
+            Vec<_>,
+            Vec<_>,
+            HashMap<u16, Redaction>,
+        ) = tables.into_iter().multiunzip();
 
         self.lookup = TagLookupIndex {
             tag32_entries_by_pkg: entries,
@@ -112,6 +120,7 @@ impl PackageManager {
                 .collect(),
             tag64_entries: hashes.into_iter().flatten().collect(),
             named_tags: named_tags.into_iter().flatten().collect(),
+            redaction_levels: redaction_levels.into_iter().collect(),
         };
 
         info!(

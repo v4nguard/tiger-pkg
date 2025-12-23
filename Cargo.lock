@@ -871,6 +871,7 @@ dependencies = [
  "anyhow",
  "bincode",
  "binrw",
+ "bitflags",
  "clap",
  "clap-num",
  "env_logger",

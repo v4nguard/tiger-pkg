@@ -16,6 +16,10 @@ pub struct PackageHeader {
 
     #[br(seek_before = SeekFrom::Start(0x10))]
     pub pkg_id: u16,
+
+    #[br(map(|v: u8| v != 0))]
+    pub is_unpatchable: bool,
+
     #[br(seek_before = SeekFrom::Start(0x20))]
     pub build_time: u64,
     #[br(seek_before = SeekFrom::Start(0x30))]

@@ -5,7 +5,7 @@ use lazy_static::lazy_static;
 use parking_lot::RwLock;
 use tracing::{error, info};
 
-use crate::{DestinyVersion, GameVersion, Version};
+use crate::{d2_shared::BlockFlags, DestinyVersion, GameVersion, Version};
 
 lazy_static! {
     static ref CIPHERS_EXTRA: RwLock<HashMap<u64, (Aes128Gcm, [u8; 12])>> = {
@@ -30,6 +30,10 @@ pub fn register_pkg_key(group: u64, key: [u8; 16], iv: [u8; 12]) {
     CIPHERS_EXTRA
         .write()
         .insert(group, (Aes128Gcm::new(&key.into()), iv));
+}
+
+pub fn has_pkg_key(group: u64) -> bool {
+    CIPHERS_EXTRA.read().contains_key(&group)
 }
 
 pub struct PkgGcmState {
@@ -73,11 +77,11 @@ impl PkgGcmState {
 
     pub fn decrypt_block_in_place(
         &self,
-        flags: u16,
+        flags: BlockFlags,
         tag: &[u8],
         data: &mut [u8],
     ) -> anyhow::Result<()> {
-        if (flags & 0x8) != 0 {
+        if flags.contains(BlockFlags::REDACTED) {
             if let Some((cipher, iv)) = &self.cipher_extra {
                 if cipher
                     .decrypt_in_place_detached(iv.as_slice().into(), &[], data, tag.into())
@@ -93,7 +97,7 @@ impl PkgGcmState {
             )));
         }
 
-        let (cipher, nonce) = if (flags & 0x4) != 0 {
+        let (cipher, nonce) = if flags.contains(BlockFlags::ALT_CIPHER) {
             (&self.cipher_1, &self.nonce)
         } else {
             (&self.cipher_0, &self.nonce)

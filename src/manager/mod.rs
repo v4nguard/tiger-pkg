@@ -20,7 +20,7 @@ use tracing::{debug_span, info, warn};
 use crate::{
     d2_shared::PackageNamedTagEntry,
     oodle,
-    package::{Package, PackagePlatform, UEntryHeader},
+    package::{Package, PackagePlatform, Redaction, UEntryHeader},
     tag::TagHash64,
     GameVersion, TagHash, Version,
 };
@@ -38,6 +38,7 @@ pub struct TagLookupIndex {
     pub tag32_to_tag64: HashMap<TagHash, TagHash64>,
 
     pub named_tags: Vec<PackageNamedTagEntry>,
+    pub redaction_levels: HashMap<u16, Redaction>,
 }
 
 pub struct PackageManager {
@@ -308,6 +309,10 @@ impl PackageManager {
         let data = self.read_tag64(hash)?;
         let mut cursor = Cursor::new(&data);
         Ok(cursor.read_type(self.version.endian())?)
+    }
+
+    pub fn package_redaction_level(&self, pkg_id: u16) -> Option<Redaction> {
+        self.lookup.redaction_levels.get(&pkg_id).copied()
     }
 }
 

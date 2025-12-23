@@ -162,6 +162,10 @@ pub trait Package: Send + Sync {
             .map(|(i, e)| (i, e.clone()))
             .collect()
     }
+
+    fn redaction_level(&self) -> Redaction {
+        Redaction::None
+    }
 }
 
 /// ! Currently only works for Pre-BL Destiny 2
@@ -268,4 +272,11 @@ impl Display for PackagePlatform {
             PackagePlatform::Scarlett => f.write_str("scarlett"),
         }
     }
+}
+
+#[derive(PartialEq, Eq, Debug, Clone, Copy, bincode::Decode, bincode::Encode)]
+pub enum Redaction {
+    Full,
+    Partial,
+    None,
 }

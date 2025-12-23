@@ -9,6 +9,7 @@ use std::{
 use ahash::AHashMap;
 use anyhow::Context;
 use binrw::{BinRead, BinReaderExt, NullString};
+use bitflags::bitflags;
 use parking_lot::RwLock;
 
 use crate::{
@@ -47,9 +48,20 @@ pub struct BlockHeader {
     pub offset: u32,
     pub size: u32,
     pub patch_id: u16,
-    pub flags: u16,
+    #[br(map(|v: u16| BlockFlags::from_bits_retain(v)))]
+    pub flags: BlockFlags,
     pub _hash: [u8; 20],
     pub gcm_tag: [u8; 16],
+}
+
+bitflags! {
+    #[derive(Debug, Clone, Copy)]
+    pub struct BlockFlags: u16 {
+        const COMPRESSED = 0x1;
+        const ENCRYPTED = 0x2;
+        const ALT_CIPHER = 0x4;
+        const REDACTED = 0x8;
+    }
 }
 
 #[derive(BinRead, Debug, Clone)]
@@ -184,13 +196,13 @@ impl PackageCommonD2 {
 
         let mut block_data = self.get_block_raw(block_index)?.to_vec();
 
-        if (bh.flags & 0x2) != 0 {
+        if bh.flags.contains(BlockFlags::ENCRYPTED) {
             self.gcm
                 .write()
                 .decrypt_block_in_place(bh.flags, &bh.gcm_tag, &mut block_data)?;
         };
 
-        let decompressed_data = if (bh.flags & 0x1) != 0 {
+        let decompressed_data = if bh.flags.contains(BlockFlags::COMPRESSED) {
             let mut buffer = vec![0u8; BLOCK_SIZE];
             let _decompressed_size = match self.version {
                 // Destiny 1
