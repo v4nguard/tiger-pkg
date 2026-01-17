@@ -109,7 +109,9 @@ impl PackageD1InternalAlpha {
                 .map(|n: NamedTagEntryD1| PackageNamedTagEntry {
                     hash: n.hash,
                     class_hash: n.class_hash,
-                    name: String::from_utf8_lossy(&n.name).into_owned(),
+                    name: String::from_utf8_lossy(&n.name)
+                        .trim_end_matches('\0')
+                        .to_owned(),
                 })
                 .collect(),
         })

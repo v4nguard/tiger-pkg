@@ -151,7 +151,7 @@ impl Default for PathCache {
 }
 
 impl PathCache {
-    pub const VERSION: usize = 4;
+    pub const VERSION: usize = 5;
 
     /// Gets path cache entry by version and platform
     /// If `platform` is None, the first
