@@ -2,7 +2,6 @@
 
 [![Latest version](https://img.shields.io/crates/v/tiger-pkg.svg)](https://crates.io/crates/tiger-pkg)
 [![Documentation](https://docs.rs/tiger-pkg/badge.svg)](https://docs.rs/tiger-pkg)
-![Discord](https://img.shields.io/discord/948590455715684393?label=v4nguard%20discord&color=%2377aaff)
 
 You need an oo2core DLL to be able to decompress packages.
 When using tiger-pkg with a Destiny 2/Marathon installation, PackageManager will automatically search for oo2core
@@ -16,40 +15,44 @@ On Linux, liblinoodle is used for oo2core_3 support (which requires the respecti
 
 ## Package format support
 
-| Version                         | Platform          | Works? | Oodle Library |
-| ------------------------------- | ----------------- | ------ | --------- |
-| Destiny Internal Alpha          | X360              | ✅      | `oo2core_3_win64.dll` |
-| Destiny Legacy (The Taken King) | PS3/X360/PS4/XONE | ✅      | `oo2core_3_win64.dll` |
-| Destiny (Rise of Iron)          | PS4/XONE          | ✅      | `oo2core_3_win64.dll` |
-| Destiny 2 (Beta)                | Any               | ✅      | `oo2core_3_win64.dll` |
-| Destiny 2 (Pre-BL)              | Any               | ✅      | `oo2core_3_win64.dll` |
-| Destiny 2 (Post-BL)             | Any               | ✅      | `oo2core_9_win64.dll` / `liboodle-data-shared.so` |
-| Marathon                        | Any               | ✅      | `oo2core_9_win64.dll` / `liboodle-data-shared.so` |
+| Version                         | Platform          | Works? | Oodle Library                                     |
+| ------------------------------- | ----------------- | ------ | ------------------------------------------------- |
+| Destiny Internal Alpha          | X360              | ✅     | `oo2core_3_win64.dll`                             |
+| Destiny Legacy (The Taken King) | PS3/X360/PS4/XONE | ✅     | `oo2core_3_win64.dll`                             |
+| Destiny (Rise of Iron)          | PS4/XONE          | ✅     | `oo2core_3_win64.dll`                             |
+| Destiny 2 (Beta)                | Any               | ✅     | `oo2core_3_win64.dll`                             |
+| Destiny 2 (Pre-BL)              | Any               | ✅     | `oo2core_3_win64.dll`                             |
+| Destiny 2 (Post-BL)             | Any               | ✅     | `oo2core_9_win64.dll` / `liboodle-data-shared.so` |
+| Marathon                        | Any               | ✅     | `oo2core_9_win64.dll` / `liboodle-data-shared.so` |
 
 ## Game version codes
 
 ### Destiny
 
-| Version               | Code          |
-| --------------------- | ------------- |
-| DestinyInternalAlpha  | `d1_devalpha` |
-| DestinyFirstLookAlpha | `d1_fla`      |
-| DestinyTheTakenKing   | `d1_ttk`      |
-| DestinyRiseOfIron     | `d1_roi`      |
-| Destiny2Beta          | `d2_beta`     |
-| Destiny2Forsaken      | `d2_fs`       |
-| Destiny2Shadowkeep    | `d2_sk`       |
-| Destiny2BeyondLight   | `d2_bl`       |
-| Destiny2WitchQueen    | `d2_wq`       |
-| Destiny2Lightfall     | `d2_lf`       |
-| Destiny2TheFinalShape | `d2_tfs`      |
-| Destiny2TheEdgeOfFate | `d2_eof`      |
+| Version                     | Code           |
+| --------------------------- | -------------- |
+| Destiny (Internal Alpha)    | `d1_devalpha`  |
+| Destiny (First Look Alpha)  | `d1_fla`       |
+| Destiny: The Taken King     | `d1_ttk`       |
+| Destiny: Rise of Iron       | `d1_roi`       |
+| Destiny 2 (Beta)            | `d2_beta`      |
+| Destiny 2: Forsaken         | `d2_fs`        |
+| Destiny 2: Shadowkeep       | `d2_sk`        |
+| Destiny 2: Beyond Light     | `d2_bl`        |
+| Destiny 2: Witch Queen      | `d2_wq`        |
+| Destiny 2: Lightfall        | `d2_lf`        |
+| Destiny 2: The Final Shape  | `d2_tfs`       |
+| Destiny 2: The Edge of Fate | `d2_eof`       |
+| Destiny 2: Renegades        | `d2_renegades` |
 
 ### Marathon
 
-| Version       | Code       |
-| ------------- | ---------- |
-| MarathonAlpha | `ma_alpha` |
+| Version                      | Code            |
+| ---------------------------- | --------------- |
+| Marathon (Alpha/Test Builds) | `goliath_alpha` |
+| Marathon\*                   | `goliath`       |
+
+###### \* Includes server slam build
 
 ## Platform codes
 

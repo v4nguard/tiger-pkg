@@ -867,7 +867,7 @@ dependencies = [
 
 [[package]]
 name = "tiger-pkg"
-version = "0.19.1"
+version = "0.20.0"
 dependencies = [
  "aes-gcm",
  "ahash",

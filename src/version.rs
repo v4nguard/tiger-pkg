@@ -105,7 +105,9 @@ impl clap::ValueEnum for GameVersion {
             Self::Destiny(DestinyVersion::Destiny2Lightfall),
             Self::Destiny(DestinyVersion::Destiny2TheFinalShape),
             Self::Destiny(DestinyVersion::Destiny2TheEdgeOfFate),
+            Self::Destiny(DestinyVersion::Destiny2Renegades),
             Self::Marathon(MarathonVersion::MarathonAlpha),
+            Self::Marathon(MarathonVersion::Marathon),
         ]
     }
 
@@ -120,10 +122,15 @@ impl clap::ValueEnum for GameVersion {
 #[derive(
     serde::Serialize, serde::Deserialize, clap::ValueEnum, PartialEq, PartialOrd, Debug, Clone, Copy,
 )]
+// TODO(cohae): Revise retail version numbers when release rolls around
 pub enum MarathonVersion {
     /// Closed alpha from April 2025
-    #[value(name = "ma_alpha")]
+    #[value(name = "goliath_alpha")]
     MarathonAlpha = 500,
+
+    /// Release
+    #[value(name = "goliath")]
+    Marathon = 1000,
 }
 
 impl Version for MarathonVersion {
@@ -142,6 +149,7 @@ impl Version for MarathonVersion {
     fn name(&self) -> &'static str {
         match self {
             MarathonVersion::MarathonAlpha => "Marathon Closed Alpha",
+            MarathonVersion::Marathon => "Marathon",
         }
     }
 }
@@ -197,6 +205,10 @@ pub enum DestinyVersion {
     /// Destiny 2 (The Edge of Fate)
     #[value(name = "d2_eof")]
     Destiny2TheEdgeOfFate = 2_9000,
+
+    /// Destiny 2 (Renegades)
+    #[value(name = "d2_ren")]
+    Destiny2Renegades = 2_9500,
 }
 
 impl DestinyVersion {
@@ -230,7 +242,8 @@ impl Version for DestinyVersion {
             | DestinyVersion::Destiny2WitchQueen
             | DestinyVersion::Destiny2Lightfall
             | DestinyVersion::Destiny2TheFinalShape
-            | DestinyVersion::Destiny2TheEdgeOfFate => {
+            | DestinyVersion::Destiny2TheEdgeOfFate
+            | DestinyVersion::Destiny2Renegades => {
                 Arc::new(PackageD2BeyondLight::open(path, *self)?)
             }
         })
@@ -259,6 +272,7 @@ impl Version for DestinyVersion {
             DestinyVersion::Destiny2Lightfall => "Destiny 2: Lightfall",
             DestinyVersion::Destiny2TheFinalShape => "Destiny 2: The Final Shape",
             DestinyVersion::Destiny2TheEdgeOfFate => "Destiny 2: The Edge of Fate",
+            DestinyVersion::Destiny2Renegades => "Destiny 2: Renegades",
         }
     }
 }

@@ -221,7 +221,8 @@ impl PackageCommonD2 {
                 | DestinyVersion::Destiny2WitchQueen
                 | DestinyVersion::Destiny2Lightfall
                 | DestinyVersion::Destiny2TheFinalShape
-                | DestinyVersion::Destiny2TheEdgeOfFate => oodle::decompress_9,
+                | DestinyVersion::Destiny2TheEdgeOfFate
+                | DestinyVersion::Destiny2Renegades => oodle::decompress_9,
             }(&block_data, &mut buffer)?;
 
             buffer
