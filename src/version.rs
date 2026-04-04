@@ -46,6 +46,15 @@ pub enum GameVersion {
     Marathon(MarathonVersion),
 }
 
+impl GameVersion {
+    pub fn engine_version(&self) -> EngineVersion {
+        match self {
+            Self::Destiny(v) => v.engine_version(),
+            Self::Marathon(v) => v.engine_version(),
+        }
+    }
+}
+
 impl Version for GameVersion {
     fn open(&self, path: &str) -> anyhow::Result<Arc<dyn Package>> {
         match self {
@@ -131,6 +140,14 @@ pub enum MarathonVersion {
     /// Release
     #[value(name = "goliath")]
     Marathon = 1000,
+}
+
+impl MarathonVersion {
+    pub fn engine_version(&self) -> EngineVersion {
+        match self {
+            Self::MarathonAlpha | Self::Marathon => EngineVersion::TigerGoliath,
+        }
+    }
 }
 
 impl Version for MarathonVersion {
@@ -223,6 +240,24 @@ impl DestinyVersion {
     pub fn is_prebl(&self) -> bool {
         DestinyVersion::Destiny2Beta <= *self && *self <= DestinyVersion::Destiny2Shadowkeep
     }
+
+    pub fn engine_version(&self) -> EngineVersion {
+        match self {
+            DestinyVersion::DestinyInternalAlpha => EngineVersion::TigerD1Indev,
+            DestinyVersion::DestinyFirstLookAlpha => EngineVersion::TigerD1Alpha,
+            DestinyVersion::DestinyTheTakenKing => EngineVersion::TigerD1v1,
+            DestinyVersion::DestinyRiseOfIron => EngineVersion::TigerD1v2,
+            DestinyVersion::Destiny2Beta
+            | DestinyVersion::Destiny2Forsaken
+            | DestinyVersion::Destiny2Shadowkeep => EngineVersion::TigerD2v1,
+            DestinyVersion::Destiny2BeyondLight
+            | DestinyVersion::Destiny2WitchQueen
+            | DestinyVersion::Destiny2Lightfall
+            | DestinyVersion::Destiny2TheFinalShape
+            | DestinyVersion::Destiny2TheEdgeOfFate
+            | DestinyVersion::Destiny2Renegades => EngineVersion::TigerD2v2,
+        }
+    }
 }
 
 impl Version for DestinyVersion {
@@ -275,4 +310,23 @@ impl Version for DestinyVersion {
             DestinyVersion::Destiny2Renegades => "Destiny 2: Renegades",
         }
     }
+}
+
+/// Represents major engine versions
+#[derive(serde::Serialize, serde::Deserialize, PartialEq, PartialOrd, Debug, Clone, Copy)]
+pub enum EngineVersion {
+    TigerD1Indev = 1,
+    TigerD1Alpha = 5,
+    /// Destiny 1 Vanilla -> The Taken King
+    TigerD1v1 = 100,
+    /// Destiny 1: Rise of Iron
+    TigerD1v2 = 101,
+
+    /// Destiny 2 Vanilla -> Shadowkeep
+    TigerD2v1 = 200,
+    /// Destiny 2 Beyond Light -> Present
+    TigerD2v2 = 201,
+
+    /// Marathon
+    TigerGoliath = 300,
 }
