@@ -6,7 +6,7 @@ use std::{
 };
 
 use anyhow::{anyhow, ensure};
-use binrw::{BinRead, Endian};
+use binrw::{BinRead, BinWrite, Endian};
 
 use crate::{d2_shared::PackageNamedTagEntry, TagHash};
 
@@ -30,8 +30,8 @@ pub struct UHashTableEntry {
     pub reference: TagHash,
 }
 
-#[derive(BinRead, Debug, Copy, Clone)]
-#[br(repr = u16)]
+#[derive(BinRead, BinWrite, Debug, Copy, Clone)]
+#[brw(repr = u16)]
 pub enum PackageLanguage {
     None = 0,
     English = 1,
@@ -213,8 +213,9 @@ pub fn classify_file_prebl(ftype: u8, fsubtype: u8) -> String {
     Clone,
     Copy,
     BinRead,
+    BinWrite,
 )]
-#[br(repr = u16)]
+#[brw(repr = u16)]
 pub enum PackagePlatform {
     Tool32,
     Win32,

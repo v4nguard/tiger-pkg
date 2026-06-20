@@ -8,7 +8,7 @@ use std::{
 
 use ahash::AHashMap;
 use anyhow::Context;
-use binrw::{BinRead, BinReaderExt, NullString};
+use binrw::{binrw, BinRead, BinReaderExt, NullString};
 use bitflags::bitflags;
 use parking_lot::RwLock;
 
@@ -20,35 +20,51 @@ use crate::{
     DestinyVersion, GameVersion, TagHash,
 };
 
-#[derive(BinRead, Debug, Clone)]
+#[binrw]
+#[derive(Debug, Clone)]
 pub struct EntryHeader {
     pub reference: u32,
 
+    #[bw(calc = ((*_unk_type2 as u32) << 16) |((*file_type as u32) << 9) | ((*file_subtype as u32) << 6) |*_unk_type as u32)]
     _type_info: u32,
 
+    #[br(calc = (_type_info >> 16) as u8)]
+    #[bw(ignore)]
+    _unk_type2: u8,
     #[br(calc = (_type_info >> 9) as u8 & 0x7f)]
+    #[bw(ignore)]
     pub file_type: u8,
     #[br(calc = (_type_info >> 6) as u8 & 0x7)]
+    #[bw(ignore)]
     pub file_subtype: u8,
+    #[br(calc = _type_info as u8 & 0x3f)]
+    #[bw(ignore)]
+    _unk_type: u8,
 
+    #[bw(calc = ((*file_size as u64) << 28) | (((*starting_block_offset as u64) >> 4) << 14) | *starting_block as u64 )]
     _block_info: u64,
 
     #[br(calc = _block_info as u32 & 0x3fff)]
+    #[bw(ignore)]
     pub starting_block: u32,
 
     #[br(calc = ((_block_info >> 14) as u32 & 0x3FFF) << 4)]
+    #[bw(ignore)]
     pub starting_block_offset: u32,
 
     #[br(calc = (_block_info >> 28) as u32)]
+    #[bw(ignore)]
     pub file_size: u32,
 }
 
-#[derive(BinRead, Debug, Clone)]
+#[binrw]
+#[derive(Debug, Clone)]
 pub struct BlockHeader {
     pub offset: u32,
     pub size: u32,
     pub patch_id: u16,
     #[br(map(|v: u16| BlockFlags::from_bits_retain(v)))]
+    #[bw(map(|v: &BlockFlags| v.bits()))]
     pub flags: BlockFlags,
     pub _hash: [u8; 20],
     pub gcm_tag: [u8; 16],
@@ -64,7 +80,8 @@ bitflags! {
     }
 }
 
-#[derive(BinRead, Debug, Clone)]
+#[binrw]
+#[derive(Debug, Clone)]
 pub struct HashTableEntry {
     pub hash64: u64,
     pub hash32: TagHash,

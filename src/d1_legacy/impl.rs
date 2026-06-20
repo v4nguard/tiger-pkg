@@ -144,6 +144,22 @@ impl PackageD1Legacy {
             block_data
         })
     }
+
+    pub fn blocks(&self) -> &[BlockHeader] {
+        &self.blocks
+    }
+
+    pub fn blocks_mut(&mut self) -> &mut Vec<BlockHeader> {
+        self.blocks.as_mut()
+    }
+
+    pub fn entries_raw(&self) -> &[EntryHeader] {
+        &self._entries
+    }
+
+    pub fn entry_mut(&mut self, index: usize) -> Option<&mut EntryHeader> {
+        self._entries.get_mut(index)
+    }
 }
 
 impl Package for PackageD1Legacy {

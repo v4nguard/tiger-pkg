@@ -8,15 +8,19 @@ use binrw::{BinReaderExt, Endian, VecArgs};
 
 use crate::{
     d2_prebl::structs::PackageHeader,
-    d2_shared::{CommonPackageData, HashTableEntry, PackageCommonD2, PackageNamedTagEntry},
+    d2_shared::{
+        BlockHeader, CommonPackageData, EntryHeader, HashTableEntry, PackageCommonD2,
+        PackageNamedTagEntry,
+    },
     package::{Package, PackageLanguage, PackagePlatform, ReadSeek, UEntryHeader, UHashTableEntry},
-    DestinyVersion,
+    DestinyVersion, TagHash,
 };
 
 pub struct PackageD2PreBL {
     common: PackageCommonD2,
     pub header: PackageHeader,
     pub named_tags: Vec<PackageNamedTagEntry>,
+    pub precached_tags: Vec<[TagHash; 2]>,
 }
 
 unsafe impl Send for PackageD2PreBL {}
@@ -38,22 +42,43 @@ impl PackageD2PreBL {
         let mut reader = BufReader::new(reader);
         let header: PackageHeader = reader.read_le()?;
 
-        reader.seek(SeekFrom::Start(header.entry_table_offset as u64 - 16))?;
-        let entry_table_size_bytes = reader.read_le::<u32>()? * 16;
+        reader.seek(SeekFrom::Start(header.data_table_offset as u64 + 0x18))?;
+        let entry_table_off: u64 = reader.read_le()?;
 
-        reader.seek(SeekFrom::Start(header.entry_table_offset as _))?;
+        reader.seek_relative(8)?;
+        let block_table_off: u64 = reader.read_le()?;
+
+        let precache_table_len: u64 = reader.read_le()?;
+        let precache_table_off: u64 = reader.read_le()?;
+
+        reader.seek(SeekFrom::Start(
+            (header.data_table_offset as u64 + 0x18 + entry_table_off + 0x10) as _,
+        ))?;
+
         let entries = reader.read_le_args(VecArgs {
             count: header.entry_table_size as _,
             inner: (),
         })?;
 
         reader.seek(SeekFrom::Start(
-            (header.entry_table_offset + entry_table_size_bytes + 32) as _,
+            (header.data_table_offset as u64 + 0x28 + block_table_off + 0x10) as _,
         ))?;
         let blocks = reader.read_le_args(VecArgs {
             count: header.block_table_size as _,
             inner: (),
         })?;
+
+        let precached_tags: Vec<[TagHash; 2]> = if precache_table_len != 0 {
+            reader.seek(SeekFrom::Start(
+                (header.data_table_offset as u64 + 0x38 + precache_table_off + 0x10) as _,
+            ))?;
+            reader.read_le_args(VecArgs {
+                count: precache_table_len as _,
+                inner: (),
+            })?
+        } else {
+            vec![]
+        };
 
         let wide_hashes: Vec<HashTableEntry> = if header.misc_data_offset != 0 {
             reader.seek(SeekFrom::Start((header.misc_data_offset + 0x30) as _))?;
@@ -98,7 +123,24 @@ impl PackageD2PreBL {
             )?,
             header,
             named_tags,
+            precached_tags,
         })
+    }
+
+    pub fn blocks(&self) -> &[BlockHeader] {
+        &self.common.blocks
+    }
+
+    pub fn blocks_mut(&mut self) -> &mut Vec<BlockHeader> {
+        self.common.blocks.as_mut()
+    }
+
+    pub fn entries_raw(&self) -> &[EntryHeader] {
+        &self.common._entries
+    }
+
+    pub fn entry_mut(&mut self, index: usize) -> Option<&mut EntryHeader> {
+        self.common._entries.get_mut(index)
     }
 }
 

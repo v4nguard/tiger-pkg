@@ -1,13 +1,14 @@
 use std::io::SeekFrom;
 
-use binrw::{binrw, BinRead};
+use binrw::binrw;
 
 use crate::{
     package::{PackageLanguage, PackagePlatform},
     TagHash,
 };
 
-#[derive(BinRead, Debug)]
+#[binrw]
+#[derive(Debug)]
 #[br(big)]
 #[allow(dead_code)]
 pub struct PackageHeader {
@@ -17,15 +18,17 @@ pub struct PackageHeader {
 
     pub pkg_id: u16,
     pub _unk6: u16,
-    pub _unk8: u64,
+    pub group_id: u64,
     pub build_time: u64,
     pub _unk_buildid: u32,
     pub _unk1c: u32,
     pub patch_id: u16,
     pub language: PackageLanguage,
 
-    #[brw(count = 128)]
-    #[br(map = |s: Vec<u8>| String::from_utf8_lossy(&s).to_string().trim_end_matches('\0').to_string())]
+    #[br(count = 128)]
+    #[bw(pad_size_to = 128)]
+    #[br(map = |s: Vec<u8>| String::from_utf8_lossy(&s).trim_end_matches('\0').to_string())]
+    #[bw(map = |s| s.clone().into_bytes())]
     pub tool_string: String,
 
     pub _unka4: u32,
@@ -45,36 +48,48 @@ pub struct PackageHeader {
     pub named_tag_table_offset: u32,
     pub named_tag_table_hash: [u8; 20],
 
-    #[br(seek_before = SeekFrom::Start(0x13c))]
+    #[brw(seek_before = SeekFrom::Start(0x13c))]
     pub file_size: u32,
 }
 
-#[derive(BinRead, Debug)]
-#[br(big)]
+#[binrw]
+#[derive(Debug)]
+#[brw(big)]
 pub struct EntryHeader {
     pub reference: u32,
 
-    _thing: u32,
-    #[br(calc = (_thing >> 16) as u8)]
+    #[bw(calc = (*file_type as u32) << 16 | (*unk_type2 as u32) << 8 | *file_subtype as u32)]
+    _types: u32,
+
+    #[br(calc = (_types >> 8) as u8)]
+    #[bw(ignore)]
+    pub unk_type2: u8,
+    #[br(calc = (_types >> 16) as u8)]
+    #[bw(ignore)]
     pub file_type: u8,
-    #[br(calc = (_thing & 0xff) as u8)]
+    #[br(calc = (_types & 0xff) as u8)]
+    #[bw(ignore)]
     pub file_subtype: u8,
 
+    #[bw(calc = (*file_size as u64) << 28 | ((*starting_block_offset as u64) >> 4) << 14 | *starting_block as u64)]
     _block_info: u64,
 
     #[br(calc = _block_info as u32 & 0x3fff)]
+    #[bw(ignore)]
     pub starting_block: u32,
 
     #[br(calc = ((_block_info >> 14) as u32 & 0x3FFF) << 4)]
+    #[bw(ignore)]
     pub starting_block_offset: u32,
 
     #[br(calc = (_block_info >> 28) as u32 & 0x3FFFFFFF)]
+    #[bw(ignore)]
     pub file_size: u32,
 }
 
-#[derive(Debug)]
 #[binrw]
-#[br(big)]
+#[derive(Debug)]
+#[brw(big)]
 pub struct BlockHeader {
     pub offset: u32,
     pub size: u32,
@@ -83,7 +98,9 @@ pub struct BlockHeader {
     pub hash: [u8; 20],
 }
 
-#[derive(BinRead, Debug, Clone)]
+#[binrw]
+#[derive(Debug, Clone)]
+#[brw(big)]
 pub struct NamedTagEntryD1 {
     pub hash: TagHash,
     pub class_hash: u32,
