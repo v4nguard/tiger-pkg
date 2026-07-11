@@ -24,9 +24,9 @@ impl PackageManager {
     pub(super) fn read_lookup_cache(&self) -> Option<TagLookupIndex> {
         use std::io::Read;
 
-        use crate::manager::path_cache::exe_relative_path;
+        use crate::manager::path_cache::cache_relative_path;
 
-        let mut file = std::fs::File::open(exe_relative_path(&format!(
+        let mut file = std::fs::File::open(cache_relative_path(&format!(
             "lookup_cache_{}.bin",
             self.cache_key()
         )))
@@ -51,7 +51,7 @@ impl PackageManager {
 
     #[cfg(not(feature = "ignore_lookup_cache"))]
     pub(super) fn write_lookup_cache(&self) -> anyhow::Result<()> {
-        use super::path_cache::exe_relative_path;
+        use super::path_cache::cache_relative_path;
 
         let mut data = Vec::new();
         data.extend_from_slice(&Self::LOOKUP_CACHE_MAGIC);
@@ -61,7 +61,7 @@ impl PackageManager {
         )?);
 
         Ok(std::fs::write(
-            exe_relative_path(&format!("lookup_cache_{}.bin", self.cache_key())),
+            cache_relative_path(&format!("lookup_cache_{}.bin", self.cache_key())),
             data,
         )?)
     }

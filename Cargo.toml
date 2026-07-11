@@ -22,6 +22,7 @@ binrw = "0.15"
 bitflags = "2"
 clap = { version = "4.5.4", features = ["derive"] }
 clap-num = "1.0.2"
+directories = "6.0.0"
 hex = "0.4.3"
 itertools = "0.14"
 lazy_static = "1"

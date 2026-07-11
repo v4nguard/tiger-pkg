@@ -5,7 +5,9 @@ use std::{
 };
 
 use ahash::HashMap;
+use directories::ProjectDirs;
 use itertools::Itertools;
+use lazy_static::lazy_static;
 use tracing::info;
 
 use super::PackageManager;
@@ -28,7 +30,7 @@ impl PackageManager {
     #[cfg(not(feature = "ignore_package_cache"))]
     pub(super) fn read_package_cache(silent: bool) -> Option<PathCache> {
         let cache: Option<PathCache> = serde_json::from_str(
-            &std::fs::read_to_string(exe_relative_path("package_cache.json")).ok()?,
+            &std::fs::read_to_string(cache_relative_path("package_cache.json")).ok()?,
         )
         .ok();
 
@@ -81,7 +83,7 @@ impl PackageManager {
         }
 
         Ok(std::fs::write(
-            exe_relative_path("package_cache.json"),
+            cache_relative_path("package_cache.json"),
             serde_json::to_string_pretty(&cache)?,
         )?)
     }
@@ -210,6 +212,19 @@ pub fn exe_directory() -> PathBuf {
         .to_path_buf()
 }
 
-pub fn exe_relative_path(path: &str) -> PathBuf {
-    exe_directory().join(path)
+lazy_static! {
+    static ref PROJECT_DIRECTORIES: ProjectDirs = {
+        let dirs = ProjectDirs::from("dev", "v4nguard", "tiger-pkg")
+            .expect("Could not determine tiger-pkg project directories");
+
+        if !dirs.cache_dir().exists() {
+            std::fs::create_dir_all(dirs.cache_dir()).unwrap();
+        }
+
+        dirs
+    };
+}
+
+pub fn cache_relative_path(path: &str) -> PathBuf {
+    PROJECT_DIRECTORIES.cache_dir().join(path)
 }
