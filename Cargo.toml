@@ -1,6 +1,6 @@
 [package]
 name = "tiger-pkg"
-version = "0.20.1"
+version = "0.21.0"
 edition = "2021"
 authors = ["cohaereo <cohae@cohae.dev>", "nblock <nblock@nblock.dev>"]
 description = "Tiger engine package reading library for Destiny 1/2 and Marathon"
@@ -20,18 +20,18 @@ anyhow = "1"
 bincode = { version = "2.0.1" }
 binrw = "0.15"
 bitflags = "2"
-clap = { version = "4.5.4", features = ["derive"] }
-clap-num = "1.0.2"
+clap = { version = "4.6", features = ["derive"] }
+clap-num = "1.2"
 directories = "6.0.0"
 hex = "0.4.3"
-itertools = "0.14"
+itertools = "0.15"
 lazy_static = "1"
 libloading = "0.9.0"
-parking_lot = "0.12.1"
-rayon = "1.7.0"
-serde = { version = "1.0.188", features = ["derive"] }
-serde_json = "1.0.108"
-tracing = { version = "0.1.37", features = ["log"] }
+parking_lot = "0.12.5"
+rayon = "1.12"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = { version = "0.1", features = ["log"] }
 
 [features]
 # Reverses TagHashes before printing them (old format)
@@ -43,12 +43,12 @@ ignore_lookup_cache = []
 global_manager_instance = []
 
 [dev-dependencies]
-env_logger = "0.11.0"
+env_logger = "0.11"
 pbr = "1.1.1"
-rayon = "1.7.0"
-tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+rayon = "1.12"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing-tracy = "0.11.4"
-tracy-client = "0.18.0"
+tracy-client = "0.18"
 
 [package.metadata.appimage]
 auto_link = true
