@@ -1,10 +1,10 @@
 use std::{fmt::Debug, io::SeekFrom};
 
-use binrw::BinRead;
+use binrw::{BinRead, BinWrite};
 
 use crate::package::{PackageLanguage, PackagePlatform};
 
-#[derive(BinRead, Debug)]
+#[derive(BinRead, BinWrite, Debug)]
 #[allow(dead_code)]
 pub struct PackageHeader {
     #[br(assert(version == 38))]
@@ -20,8 +20,10 @@ pub struct PackageHeader {
     pub patch_id: u16, // 0x20
     pub language: PackageLanguage,
 
-    #[brw(count = 128)]
+    #[br(count = 128)]
+    #[bw(pad_size_to = 128)]
     #[br(map = |s: Vec<u8>| String::from_utf8_lossy(&s).trim_end_matches('\0').to_string())]
+    #[bw(map = |s| s.clone().into_bytes())]
     pub tool_string: String, // 0x24
 
     pub _unka4: u32,
@@ -36,10 +38,13 @@ pub struct PackageHeader {
     pub block_table_offset: u32,
     pub block_table_hash: [u8; 20],
 
-    pub misc_data_size: u32,
+    pub named_tags_len: u32,
     pub misc_data_offset: u32,
+    pub misc_data_size: u32,
     pub misc_data_hash: [u8; 20],
 
-    #[br(seek_before = SeekFrom::Start(0x164))]
+    #[brw(seek_before = SeekFrom::Start(0x160))]
+    pub deadbeef_off: u32,
     pub file_size: u32,
+    pub unk168: u32,
 }

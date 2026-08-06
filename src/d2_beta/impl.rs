@@ -8,7 +8,9 @@ use binrw::{BinReaderExt, Endian, VecArgs};
 
 use crate::{
     d2_beta::structs::PackageHeader,
-    d2_shared::{CommonPackageData, PackageCommonD2, PackageNamedTagEntry},
+    d2_shared::{
+        BlockHeader, CommonPackageData, EntryHeader, PackageCommonD2, PackageNamedTagEntry,
+    },
     package::{Package, PackageLanguage, PackagePlatform, ReadSeek, UEntryHeader, UHashTableEntry},
     DestinyVersion,
 };
@@ -79,6 +81,22 @@ impl PackageD2Beta {
             header,
             named_tags,
         })
+    }
+
+    pub fn blocks(&self) -> &[BlockHeader] {
+        &self.common.blocks
+    }
+
+    pub fn blocks_mut(&mut self) -> &mut Vec<BlockHeader> {
+        self.common.blocks.as_mut()
+    }
+
+    pub fn entries_raw(&self) -> &[EntryHeader] {
+        &self.common._entries
+    }
+
+    pub fn entry_mut(&mut self, index: usize) -> Option<&mut EntryHeader> {
+        self.common._entries.get_mut(index)
     }
 }
 
